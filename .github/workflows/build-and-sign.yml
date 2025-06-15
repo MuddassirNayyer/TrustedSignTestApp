@@ -1,0 +1,38 @@
+name: Build and Trusted Sign .NET App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-sign:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build the app
+        run: dotnet build -c Release
+
+      - name: Use Azure Trusted Signing
+        uses: Azure/trusted-signing-action@v1
+        with:
+          endpoint: ${{ secrets.TRUSTED_SIGNING_ENDPOINT }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          source: ./bin/Release/net8.0/TrustedSignTestApp.exe
+          output: ./signed/
+
+      - name: Upload signed artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: signed-exe
+          path: ./signed/
