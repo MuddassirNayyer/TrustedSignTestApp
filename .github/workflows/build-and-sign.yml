@@ -20,19 +20,18 @@ jobs:
 
       - name: Build the app
         run: dotnet build -c Release
-
-      - name: Use Azure Trusted Signing
-        uses: Azure/trusted-signing-action@v1
+        
+      - name: Sign files with Trusted Signing
+        uses: azure/trusted-signing-action@v0
         with:
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           endpoint: ${{ secrets.TRUSTED_SIGNING_ENDPOINT }}
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          source: ./bin/Release/net8.0/TrustedSignTestApp.exe
-          output: ./signed/
-
-      - name: Upload signed artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: signed-exe
-          path: ./signed/
+          trusted-signing-account-name: ${{ secrets.ACCOUNT_NAME }}
+          certificate-profile-name: ${{ secrets.CERTIFICATE_PROFILE_NAME }}
+          files-folder: ./out
+          files-folder-filter: exe,dll
+          file-digest: SHA256
+          timestamp-rfc3161: http://timestamp.acs.microsoft.com
+          timestamp-digest: SHA256
