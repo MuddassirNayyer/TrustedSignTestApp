@@ -30,7 +30,7 @@ jobs:
           endpoint: ${{ secrets.TRUSTED_SIGNING_ENDPOINT }}
           trusted-signing-account-name: ${{ secrets.ACCOUNT_NAME }}
           certificate-profile-name: ${{ secrets.CERTIFICATE_PROFILE_NAME }}
-          files-folder: ./bin/Release/net8.0
+          files-folder: ./bin/Release/net9.0
           files-folder-filter: exe,dll
           file-digest: SHA256
           timestamp-rfc3161: http://timestamp.acs.microsoft.com
